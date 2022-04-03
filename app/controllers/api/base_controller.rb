@@ -1,4 +1,5 @@
 class Api::BaseController < ActionController::Base
+  include FakeDataHelper
   protect_from_forgery with: :null_session
   before_action :authenticate_user!
 
@@ -10,15 +11,11 @@ class Api::BaseController < ActionController::Base
 
   def current_user(user_auth = '')
     return @current_user if @current_user
-
-    if user_auth.to_i > 0
+    if user_auth.include?('-')
+      # using randon fake user
+      @current_user = fake_range_user(user_auth)
+    elsif user_auth.to_i > 0
       @current_user = User.find_by(id: user_auth.to_i)
-    elsif user_auth.include?('-')
-      # using randon user
-      user_id1, user_id2 = user_auth.split('-').map(&:to_i)
-      if user_id2 > user_id1
-        @current_user = User.where(id: (user_id1..user_id2)).sample
-      end
     end
     @current_user
   end
@@ -28,6 +25,16 @@ class Api::BaseController < ActionController::Base
       current_page: params[:page] || 1,
       per_page: params[:per_page] || 20
     }
+  end
+
+  def render_json_one(data = {})
+    hash = { current_user: current_user }
+    if data.is_a? Hash
+      hash.merge!(data)
+    else
+      hash[:data] = data
+    end
+    render json: hash
   end
 
   def render_json_pages(data)

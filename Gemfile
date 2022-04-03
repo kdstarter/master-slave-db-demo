@@ -25,6 +25,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 gem 'hirb'
 gem 'bigdecimal', '~> 1.3.5'
 gem 'kaminari', '~> 1.2.2'
+gem 'faker', '~> 2.20.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

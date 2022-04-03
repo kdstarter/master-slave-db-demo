@@ -5,6 +5,7 @@ class Api::ProductsController < Api::BaseController
   end
 
   def create
-
+    @product = fake_user_product(current_user)
+    render_json_one(product: @product)
   end
 end

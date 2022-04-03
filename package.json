@@ -1,5 +1,5 @@
 {
-  "name": "master_slaver_db_demo",
+  "name": "master_slave_db_demo",
   "private": true,
   "dependencies": {
     "@rails/actioncable": "^6.0.0",

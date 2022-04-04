@@ -27,6 +27,10 @@ gem 'bigdecimal', '~> 1.3.5'
 gem 'kaminari', '~> 1.2.2'
 gem 'faker', '~> 2.20.0'
 
+gem 'redis-rails', '~> 5.0.2'
+gem 'redis-namespace', '~> 1.8.2'
+# gem 'redis-objects'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

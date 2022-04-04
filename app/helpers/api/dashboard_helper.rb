@@ -1,4 +1,33 @@
 module Api::DashboardHelper
+  def fetch_all_count_cache(which_db)
+    time_data = count_all_tables(which_db)
+    redis_key = time_data.keys.first.to_s
+
+    exist_data = RedisClient.current.hgetall(which_db)
+    if exist_data[redis_key].blank?
+      RedisClient.current.hset(which_db, redis_key, time_data.values.first.to_json)
+    else
+    end
+
+    new_data = {}
+    data_index = 0
+    exist_data = RedisClient.current.hgetall(which_db)
+    data_start_index = exist_data.size - 10
+
+    exist_data.each {|k, v|
+      begin
+        if data_index >= data_start_index
+          new_data[k] = JSON.parse(v)
+        end
+        data_index += 1
+      rescue JSON::ParserError => e
+        puts "ParserError: #{e.inspect}"
+      end
+    }
+    puts "#{which_db} -> cached time data, #{new_data.size} count"
+    new_data
+  end
+
   def count_all_tables(which_db)
     data = {}
     start_time = Time.now

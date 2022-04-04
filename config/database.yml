@@ -12,19 +12,32 @@ default: &default
   host: <%= ENV.fetch('DATABASE_HOST') { '127.0.0.1' } %>
   port: <%= ENV.fetch('DATABASE_PORT') { '3306' } %>
   username: <%= ENV.fetch('DATABASE_USERNAME') { 'root' } %>
-  password: <%= ENV.fetch('DATABASE_USERNAME') { '123' } %>
+  password: <%= ENV.fetch('DATABASE_PASSWORD') { '123' } %>
 
 development:
   primary:
     <<: *default
     database: master_db
+  primary_replica:
+    <<: *default
+    database: master_db
+    replica: true
+    pool: <%= ENV.fetch("DB_READONLY_MAX_POOL") { 5 } %>
+    host: <%= ENV.fetch('DB_READONLY_HOST') { '127.0.0.1' } %>
+    port: <%= ENV.fetch('DB_READONLY_PORT') { '3307' } %>
+    username: <%= ENV.fetch('DB_READONLY_USERNAME') { 'viewer' } %>
+    password: <%= ENV.fetch('DB_READONLY_PASSWORD') { '1234567' } %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: master_db_test
+  primary:
+    <<: *default
+    database: master_db_test
+  primary_replica:
+    <<: *default
+    database: master_db_test
 
 production:
   <<: *default

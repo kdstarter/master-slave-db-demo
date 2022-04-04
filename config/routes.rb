@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   root 'home#index'
 
   namespace :api do
+    resources :dashboard, only: [:index]
     resources :products, only: [:index, :create]
   end
 end

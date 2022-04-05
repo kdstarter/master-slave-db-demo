@@ -1,6 +1,10 @@
 class Api::ProductsController < Api::BaseController
   def index
-    @products = Product.all
+    if params[:scope] = 'my'
+      @products = current_user.products
+    else
+      @products = Product.all
+    end
     render_json_pages @products
   end
 

@@ -39,9 +39,14 @@ class Api::BaseController < ActionController::Base
 
   def render_json_pages(data)
     pager = pager_params(params)
-    data = data.page(pager[:page]).per(pager[:per_page])
+    if data.blank?
+      data = []
+      pager[:total_pages] = 1
+    else
+      data = data.page(pager[:page]).per(pager[:per_page])
+      pager[:total_pages] = data.total_pages
+    end
 
-    pager[:total_pages] = data.total_pages
     render json: { current_user: current_user, pager: pager, data: data }
   end
 end

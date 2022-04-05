@@ -6,5 +6,6 @@ Rails.application.routes.draw do
   namespace :api do
     resources :dashboard, only: [:index]
     resources :products, only: [:index, :create]
+    resources :orders, only: [:index, :create, :update]
   end
 end

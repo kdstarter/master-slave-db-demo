@@ -1,2 +1,9 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
+
+.table-dashboard {
+  th.active {
+    font-size: larger;
+    color: limegreen;
+  }
+}

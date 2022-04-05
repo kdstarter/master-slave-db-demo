@@ -11,8 +11,9 @@ module Api::DashboardHelper
 
     new_data = {}
     data_index = 0
+    recent_size = 15
     exist_data = RedisClient.current.hgetall(which_db)
-    data_start_index = exist_data.size - 10
+    data_start_index = exist_data.size - recent_size
 
     exist_data.each {|k, v|
       begin
@@ -24,11 +25,14 @@ module Api::DashboardHelper
         puts "ParserError: #{e.inspect}"
       end
     }
-    puts "#{which_db} -> cached time data, #{new_data.size} count"
+    if new_data.size < recent_size
+      puts "#{which_db} -> cached time data, #{new_data.size} count"
+    end
     new_data
   end
 
   def count_all_tables(which_db)
+    which_db = :primary_replica if which_db == :replica
     data = {}
     start_time = Time.now
     start_timef = start_time.to_f.round(2)

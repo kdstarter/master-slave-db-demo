@@ -15,16 +15,17 @@ module Api::DashboardHelper
     exist_data = RedisClient.current.hgetall(which_db)
     data_start_index = exist_data.size - recent_size
 
-    exist_data.each {|k, v|
+    exist_data.sort.each {|arr_by_time|
       begin
         if data_index >= data_start_index
-          new_data[k] = JSON.parse(v)
+          new_data[arr_by_time[0]] = JSON.parse(arr_by_time[1])
         end
         data_index += 1
       rescue JSON::ParserError => e
         puts "ParserError: #{e.inspect}"
       end
     }
+
     if new_data.size < recent_size
       puts "#{which_db} -> cached time data, #{new_data.size} count"
     end

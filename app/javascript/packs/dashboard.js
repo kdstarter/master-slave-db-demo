@@ -11,6 +11,33 @@ function hashAddKeyPrefix(prefix, hash) {
   return newHash;
 }
 
+function comparedTimeData(lastData, timeData) {
+  let incrSuffix = 'Incr';
+  if (!$.isEmptyObject(lastData)) {
+    let totalInc = 0;
+    Object.keys(lastData).forEach(function(dataKey) {
+      if (dataKey.includes('Count') && !dataKey.includes(incrSuffix)) {
+        let incCount = timeData[dataKey] - lastData[dataKey]
+        if (incCount == 0) {
+          timeData[dataKey+incrSuffix] = '';
+        } else {
+          if (incCount < 0) {
+            console.error(dataKey, 'Decr', incCount, timeData, lastData)
+          } else {
+            totalInc += incCount;
+            console.log(dataKey, incrSuffix, incCount);
+            timeData[dataKey+incrSuffix] = ' 新增 '+incCount;
+          }
+        }
+      }
+    });
+    if (totalInc > 0) {
+      console.log(lastData, 'Incr to', timeData);
+    }
+  }
+  return timeData;
+}
+
 function mergeTimeData(which_db, timeData, all_data) {
   let prefixData = hashAddKeyPrefix(which_db, timeData);
   if (which_db == 'replica') {
@@ -22,6 +49,8 @@ function mergeTimeData(which_db, timeData, all_data) {
       Object.keys(prefixData2).forEach(function(key) {
         prefixData[key] = prefixData2[key];
       });
+      prefixData = comparedTimeData(lastPrefixData, prefixData);
+      lastPrefixData = prefixData;
     }
   }
   return prefixData;
@@ -32,6 +61,19 @@ function applyDataByDB(which_db, all_data) {
   let that = this;
   that.db_name = which_db;
   let currDb = all_data[which_db]
+  let dataCount = Object.keys(currDb).length
+  if (dataCount < 15) {
+    console.log(db_name, dataCount, 'rows render at', Date.now()/1000.0);
+  }
+
+  lastTimef = currDb[Object.keys(currDb)[Object.keys(currDb).length-1]].start_timef;
+  lastTimeStr = new Date(lastTimef*1000.0).format("HH:mm:ss.S");
+  let tipHtml = lastTimeStr+" 刷新"+dataCount+"行";
+  if (refreshBtn.text().includes(lastTimeStr)) {
+    refreshBtn.html(tipHtml).removeClass('btn-success');
+  } else {
+    refreshBtn.html(tipHtml).addClass('btn-success');
+  }
 
   $.each(currDb, function(timeInt, timeData) {
     data_index += 1;
@@ -39,14 +81,14 @@ function applyDataByDB(which_db, all_data) {
     timeData.dataIndex = data_index;
     timeData.timeInt = timeInt;
     timeData.start_timef = new Date(timeData.start_timef*1000.0).format("HH:mm:ss.S");
+    // console.log(db_name, 'timeData', data_index, 'render at', timeData.start_timef);
     let prefixData = mergeTimeData(which_db, timeData, all_data);
     prefixData.timeInt = timeInt;
 
+    $('.table-dashboard th.active').removeClass('active')
     let tmpl = $.templates($('#tmplEmptyTr').html());
     let htmlTr = tmpl.render(prefixData);
     let existHtmlTr = $("#tbody-data>tr[data-id='"+timeInt+"']");
-
-    $('.table-dashboard th.active').removeClass('active')
     if (existHtmlTr.length == 1) {
       $('#tbody-data').html(htmlTr);
     } else if (existHtmlTr.length > 1) {
@@ -55,14 +97,11 @@ function applyDataByDB(which_db, all_data) {
       $('#tbody-data').append(htmlTr);
     }
   });
-  let dataCount = Object.keys(currDb).length
-  if (dataCount < 15) {
-    console.log(db_name, dataCount, 'rows renderd at', Date.now()/1000.0);
-  }
 }
 
 root.refreshDashboard = function() {
   if($('.table-dashboard').length > 0) {
+    refreshBtn.removeClass('btn-success');
     $.ajax({
       url: '/api/dashboard?type=all',
       data: {},
@@ -82,7 +121,18 @@ root.refreshDashboard = function() {
 }
 
 $(function(e) {
-  refreshDashboard();
-  root.refreshInt = setInterval('refreshDashboard()', 1000);
-  // clearInterval(refreshInt);
+  root.lastPrefixData = {};
+  root.refreshBtn = $('button.toogleRefresh');
+  refreshBtn.on('click', function(e) {
+    if (root.refreshInt) {
+      refreshBtn.removeClass('btn-success')
+      clearInterval(root.refreshInt);
+      root.refreshInt = undefined;
+    } else {
+      refreshBtn.addClass('btn-success')
+      root.refreshInt = setInterval('refreshDashboard()', 1000);
+    }
+  });
+  refreshDashboard()
+  // refreshBtn.click();
 });

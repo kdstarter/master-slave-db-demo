@@ -10,7 +10,7 @@ module FakeDataHelper
     User.find_or_create_by!(id: user_id) { |user| user.name = fake_name }
   end
 
-  def fake_user_product(user, limit_product = 25)
+  def fake_user_product(user, limit_product = 100)
     product_count = user.products.count
     if product_count >= limit_product
       user_product = user.products.sample

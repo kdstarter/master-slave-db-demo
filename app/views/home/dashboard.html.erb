@@ -4,22 +4,25 @@
     <thead>
       <tr>
         <th colspan="6" style="text-align: center;">主数据库——实时数据</th>
-        <th colspan="6" style="text-align: center;">从数据库——实时数据</th>
+        <th colspan="6" style="text-align: center;">
+          从数据库——实时数据&nbsp;
+          <button type="button" class="btn toogleRefresh">实时刷新</button>
+        </th>
       </tr>
       <tr>
         <th>No</th>
-        <th>请求时间</th>
+        <th>数据时间</th>
         <th>数据延迟(秒)</th>
         <th>用户数量</th>
         <th>商品数量</th>
         <th>订单数量</th>
 
         <th>No</th>
-        <th>请求时间</th>
-        <th>数据延迟(秒)</th>
         <th>用户数量</th>
         <th>商品数量</th>
         <th>订单数量</th>
+        <th>数据时间</th>
+        <th>数据延迟(秒)</th>
       </tr>
     </thead>
     <tbody id="tbody-data">
@@ -33,16 +36,34 @@
     <th class="{{:primaryActive}}" data-id="{{:primarytimeInt}}">{{:primarydataIndex}}</th>
     <td>{{:primarystart_timef}}</td>
     <td>...</td>
-    <td>{{:primaryUserCount}}</td>
-    <td>{{:primaryProductCount}}</td>
-    <td>{{:primaryOrderCount}}</td>
+    <td>
+      {{:primaryUserCount}}
+      <span class="CounterInc">{{:primaryUserCountIncr}}</span>
+    </td>
+    <td>
+      {{:primaryProductCount}}
+      <span class="CounterInc">{{:primaryProductCountIncr}}</span>
+    </td>
+    <td>
+      {{:primaryOrderCount}}
+      <span class="CounterInc">{{:primaryOrderCountIncr}}</span>
+    </td>
 
     <th class="{{:replicaActive}}" data-id="{{:replicatimeInt}}">{{:replicadataIndex}}</th>
+    <td>
+      {{:replicaUserCount}}
+      <span class="CounterInc">{{:replicaUserCountIncr}}</span>
+    </td>
+    <td>
+      {{:replicaProductCount}}
+      <span class="CounterInc">{{:replicaProductCountIncr}}</span>
+    </td>
+    <td>
+      {{:replicaOrderCount}}
+      <span class="CounterInc">{{:replicaOrderCountIncr}}</span>
+    </td>
     <td>{{:replicastart_timef}}</td>
     <td>...</td>
-    <td>{{:replicaUserCount}}</td>
-    <td>{{:replicaProductCount}}</td>
-    <td>{{:replicaOrderCount}}</td>
   </tr>
 </script>
 

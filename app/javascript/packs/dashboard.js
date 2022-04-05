@@ -13,26 +13,55 @@ function hashAddKeyPrefix(prefix, hash) {
 
 function comparedTimeData(lastData, timeData) {
   let incrSuffix = 'Incr';
+  let delaySuffix = 'Delay'
   if (!$.isEmptyObject(lastData)) {
-    let totalInc = 0;
+    let primaryTotalInc = 0;
+    let replicaTotalInc = 0;
+
     Object.keys(lastData).forEach(function(dataKey) {
-      if (dataKey.includes('Count') && !dataKey.includes(incrSuffix)) {
-        let incCount = timeData[dataKey] - lastData[dataKey]
+      if (dataKey.endsWith('Timef')) {
+        let delaySecond = (timeData[dataKey] - lastData[dataKey]).toFixed(2);
+        if (delaySecond >= 0) {
+          timeData[dataKey+delaySuffix] = delaySecond+'秒';
+        }
+      } else if (dataKey.endsWith('Count')) {
+        let incCount = timeData[dataKey] - lastData[dataKey];
         if (incCount == 0) {
           timeData[dataKey+incrSuffix] = '';
         } else {
           if (incCount < 0) {
-            console.error(dataKey, 'Decr', incCount, timeData, lastData)
+            // console.error(dataKey, 'Decr', incCount, timeData, lastData);
           } else {
-            totalInc += incCount;
-            console.log(dataKey, incrSuffix, incCount);
+            if (dataKey.startsWith('primary')) {
+              primaryTotalInc += incCount
+            } else {
+              replicaTotalInc += incCount
+            }
+            // console.log(dataKey, incrSuffix, incCount);
             timeData[dataKey+incrSuffix] = ' 新增 '+incCount;
           }
         }
       }
     });
-    if (totalInc > 0) {
-      console.log(lastData, 'Incr to', timeData);
+
+    timeData['replicaDbStatus'] = 'SyncWorking';
+    if (replicaTotalInc > 0) {
+      timeData['replicaTotalInc'] = ' 新增 '+replicaTotalInc;
+      // console.log(lastData, 'Incr to', timeData);
+    }
+
+    if (primaryTotalInc > 0) {
+      timeData['primaryTotalInc'] = ' 新增 '+primaryTotalInc;
+
+      if (primaryTotalInc > replicaTotalInc) {
+        if (replicaTotalInc == 0 && primaryTotalInc > 3) {
+          timeData['replicaDbStatus'] = 'SyncStoped';
+          timeData['replicaTotalInc'] = '已暂停'
+        } else if (replicaTotalInc >= 0) {
+          timeData['replicaDbStatus'] = 'SyncDelayed';
+          // timeData['replicaTotalInc'] = ' 延迟 '+(primaryTotalInc-replicaTotalInc);
+        }
+      }
     }
   }
   return timeData;
@@ -66,7 +95,7 @@ function applyDataByDB(which_db, all_data) {
     console.log(db_name, dataCount, 'rows render at', Date.now()/1000.0);
   }
 
-  lastTimef = currDb[Object.keys(currDb)[Object.keys(currDb).length-1]].start_timef;
+  lastTimef = currDb[Object.keys(currDb)[Object.keys(currDb).length-1]].StartTimef;
   lastTimeStr = new Date(lastTimef*1000.0).format("HH:mm:ss.S");
   let tipHtml = lastTimeStr+" 刷新"+dataCount+"行";
   if (refreshBtn.text().includes(lastTimeStr)) {
@@ -80,8 +109,8 @@ function applyDataByDB(which_db, all_data) {
     timeData.Active = 'active'
     timeData.dataIndex = data_index;
     timeData.timeInt = timeInt;
-    timeData.start_timef = new Date(timeData.start_timef*1000.0).format("HH:mm:ss.S");
-    // console.log(db_name, 'timeData', data_index, 'render at', timeData.start_timef);
+    timeData.StartTimeStr = new Date(timeData.StartTimef*1000.0).format("HH:mm:ss.S");
+    // console.log(db_name, 'timeData', data_index, 'render at', timeData.StartTimeStr);
     let prefixData = mergeTimeData(which_db, timeData, all_data);
     prefixData.timeInt = timeInt;
 
@@ -101,7 +130,9 @@ function applyDataByDB(which_db, all_data) {
 
 root.refreshDashboard = function() {
   if($('.table-dashboard').length > 0) {
+    refreshIndex += 1;
     refreshBtn.removeClass('btn-success');
+    // console.log(refreshIndex+'th XHR begin at', (new Date()).format("HH:mm:ss.S"))
     $.ajax({
       url: '/api/dashboard?type=all',
       data: {},
@@ -122,6 +153,7 @@ root.refreshDashboard = function() {
 
 $(function(e) {
   root.lastPrefixData = {};
+  root.refreshIndex = 0
   root.refreshBtn = $('button.toogleRefresh');
   refreshBtn.on('click', function(e) {
     if (root.refreshInt) {

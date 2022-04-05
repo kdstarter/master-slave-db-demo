@@ -41,7 +41,7 @@ module Api::DashboardHelper
 
     unless data.key?(start_key)
       data[start_key] = {}
-      data[start_key][:start_timef] = start_timef
+      data[start_key][:StartTimef] = start_timef
     end
 
     # data = data_by_base_conn(which_db, data, start_key)

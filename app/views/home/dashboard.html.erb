@@ -12,17 +12,17 @@
       <tr>
         <th>No</th>
         <th>数据时间</th>
-        <th>数据延迟(秒)</th>
         <th>用户数量</th>
         <th>商品数量</th>
         <th>订单数量</th>
+        <th>行数据间隔</th>
 
         <th>No</th>
+        <th>行数据间隔</th>
         <th>用户数量</th>
         <th>商品数量</th>
         <th>订单数量</th>
         <th>数据时间</th>
-        <th>数据延迟(秒)</th>
       </tr>
     </thead>
     <tbody id="tbody-data">
@@ -34,8 +34,7 @@
 <script id="tmplEmptyTr" type="text/x-jsrender">
   <tr data-id="{{:timeInt}}">
     <th class="{{:primaryActive}}" data-id="{{:primarytimeInt}}">{{:primarydataIndex}}</th>
-    <td>{{:primarystart_timef}}</td>
-    <td>...</td>
+    <td>{{:primaryStartTimeStr}}</td>
     <td>
       {{:primaryUserCount}}
       <span class="CounterInc">{{:primaryUserCountIncr}}</span>
@@ -48,8 +47,16 @@
       {{:primaryOrderCount}}
       <span class="CounterInc">{{:primaryOrderCountIncr}}</span>
     </td>
+    <td>
+      {{:primaryStartTimefDelay}}
+      <span class="CounterInc {{:replicaDbStatus}}">{{:primaryTotalInc}}</span>
+    </td>
 
     <th class="{{:replicaActive}}" data-id="{{:replicatimeInt}}">{{:replicadataIndex}}</th>
+    <td class="{{:replicaDbStatus}}">
+      {{:replicaStartTimefDelay}}
+      <span class="CounterInc {{:replicaDbStatus}}">{{:replicaTotalInc}}</span>
+    </td>
     <td>
       {{:replicaUserCount}}
       <span class="CounterInc">{{:replicaUserCountIncr}}</span>
@@ -62,8 +69,7 @@
       {{:replicaOrderCount}}
       <span class="CounterInc">{{:replicaOrderCountIncr}}</span>
     </td>
-    <td>{{:replicastart_timef}}</td>
-    <td>...</td>
+    <td>{{:replicaStartTimeStr}}</td>
   </tr>
 </script>
 

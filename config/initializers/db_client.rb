@@ -40,9 +40,9 @@ class DbClient
     def logger
       return @logger if @logger.present?
       @logger = Logger.new('log/db_execute.log')
-      @logger.formatter = proc do |severity, datetime, progname, msg|
-        msg.size < 8 ? "#{msg}" : "\n#{severity.upcase}: #{msg}"
-      end
+      # @logger.formatter = proc do |severity, datetime, progname, msg|
+      #   msg.size < 8 ? "#{msg}" : "\n#{severity.upcase}: #{msg}"
+      # end
       @logger
     end
 

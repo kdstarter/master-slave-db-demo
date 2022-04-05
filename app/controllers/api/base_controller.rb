@@ -47,6 +47,9 @@ class Api::BaseController < ActionController::Base
       pager[:total_pages] = data.total_pages
     end
 
+    if data.first.is_a? Product
+      data = data.as_json(with_owner: true)
+    end
     render json: { current_user: current_user, pager: pager, data: data }
   end
 end

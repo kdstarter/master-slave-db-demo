@@ -20,19 +20,40 @@ module FakeDataHelper
       user_id = (user_id2..user_id1).to_a.sample
     end
     fake_name = "No.#{user_id} #{Faker::Name.name.split(' ').first}"
-    User.find_or_create_by!(id: user_id) { |user| user.name = fake_name }
+
+    # User.find_or_create_by!(id: user_id) { |user| user.name = fake_name }
+    exist_data = nil
+    DbClient.primary_replica_exec do
+      exist_data = User.find_by(id: user_id)
+    end
+    return exist_data if exist_data.present?
+
+    user_params = { id: user_id, name: fake_name }
+    begin
+      DbClient.primary_exec do
+        exist_data = User.create!(user_params)
+      end
+    rescue ActiveRecord::ReadOnlyError => e
+      err_msg = "Failed create user#{user_id}, #{e.inspect}"
+      DbClient.log_by(:error, err_msg)
+    end
+    exist_data
   end
 
   def fake_user_product(user, limit_product = 100)
-    product_count = user.products.count
+    product_count = user.products.count(:id)
     if product_count >= limit_product
       user_product = user.products.sample
     else
       product_name = "No.#{product_count+1} #{Faker::Food.fruits}"
-      user_product = user.products.find_or_create_by!(name: product_name) { |model|
-        model.stock_amount = Random.rand(1000..10000)
-        model.pd_price = Random.rand(0..9.99).round(2)
-      }
+      exist_data = nil
+      DbClient.primary_replica_exec do
+        exist_data = user.products.find_by(name: product_name)
+      end
+      user_product = exist_data || user.products.create!(name: product_name,
+        stock_amount: Random.rand(1000..10000),
+        pd_price: Random.rand(0..9.99).round(2)
+      )
     end
     user_product
   end

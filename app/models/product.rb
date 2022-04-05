@@ -4,7 +4,7 @@ class Product < ApplicationRecord
 
   def as_json(options = {})
     hash = super.as_json
-    hash[:owner_name] = user.name
+    hash[:owner_name] = user.name if options[:with_owner]
     hash
   end
 end

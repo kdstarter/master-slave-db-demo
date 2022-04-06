@@ -1,24 +1,40 @@
-# README
+说明文档
+=======
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## 环境搭建  
 
-Things you may want to cover:
+* Ruby 2.5+
+* Rails 6.0+
+* Redis Server 
+* Mysql 5.6+ 主从数据库，可使用Docker快速搭建环境，参考文档 [agilejzl/master-slave-db](https://github.com/agilejzl/master-slave-db)
 
-* Ruby version
+## 运行环境
+* Step1: 配置数据库连接，打开 config/database.yml 文件，修改主从数据库的连接参数为你的
+* Setp2: 配置并行进程数，打开 config/puma.rb 文件，修改 WEB_CONCURRENCY 和 RAILS_MAX_THREADS  
+* Step3: Rails 相关命令执行顺序
+```bash  
+bundle install  
+rake db:create
+rake db:migrate
+rails s -b 0.0.0.0 -p 3000 
+```
+在程序跑起来后，做下一步的数据检查
 
-* System dependencies
+* Step4: 在浏览器中打开 http://localhost:3000 ，这个是数据监控页面，如果有一行数据则表示运行成功。
+或者使用终端指令确认有返回json数据
+```bash 
+curl -XGET 'http://localhost:3000/api/dashboard'
+```
 
-* Configuration
+## Postman测试并发 (顺序请求) 
+* Postman可以选择接口集合，然后执行 "Run collection"，设置总执行回合即可测试
 
-* Database creation
+## ab工具做压力测试 (并行请求) 
+'Authorization: 1-1000' 表示每次接口请求的用户ID为1到1000中的随机一个
+* 获取我的商品列表 $ ab -c 100 -n 1000 -m GET -H 'Authorization: 1-1000' 'http://localhost:3000/api/products?scope=my'
+* 发布一个我的商品 $ ab -c 100 -n 1000 -m POST -H 'Authorization: 1-1000' 'http://localhost:3000/api/products'
 
-* Database initialization
+* 获取我的订单列表 $ ab -c 100 -n 1000 -m GET -H 'Authorization: 1-1000' 'http://localhost:3000/api/orders?scope=my'
+* 创建待付款的订单 $ ab -c 50 -n 1000 -m POST -H 'Authorization: 1-1000' 'http://localhost:3000/api/orders'
+* 随机给订单付款或关闭 $ ab -c 100 -n 1000 -m PUT -H 'Authorization: 1-1000' 'http://localhost:3000/api/orders/random_id'
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...

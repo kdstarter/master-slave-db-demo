@@ -6,7 +6,7 @@
 #
 default: &default
   adapter: mysql2
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 10 } %>
   timeout: 5000
   encoding: utf8
   host: <%= ENV.fetch('DATABASE_HOST') { '127.0.0.1' } %>
@@ -22,8 +22,8 @@ development:
     <<: *default
     database: master_db
     replica: true
-    pool: <%= ENV.fetch("DB_READONLY_MAX_POOL") { 5 } %>
     host: <%= ENV.fetch('DB_READONLY_HOST') { '127.0.0.1' } %>
+    pool: <%= ENV.fetch("DB_READONLY_MAX_POOL") { 10 } %>
     port: <%= ENV.fetch('DB_READONLY_PORT') { '3307' } %>
     username: <%= ENV.fetch('DB_READONLY_USERNAME') { 'viewer' } %>
     password: <%= ENV.fetch('DB_READONLY_PASSWORD') { '1234567' } %>
@@ -40,4 +40,17 @@ test:
     database: master_db_test
 
 production:
-  <<: *default
+  primary:
+    <<: *default
+    database: master_db
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 10 } %>
+  primary_replica:
+    <<: *default
+    database: master_db
+    replica: true
+    pool: <%= ENV.fetch("DB_READONLY_MAX_POOL") { 10 } %>
+    host: <%= ENV.fetch('DB_READONLY_HOST') { '127.0.0.1' } %>
+    port: <%= ENV.fetch('DB_READONLY_PORT') { '3307' } %>
+    username: <%= ENV.fetch('DB_READONLY_USERNAME') { 'viewer' } %>
+    password: <%= ENV.fetch('DB_READONLY_PASSWORD') { '1234567' } %>
+

@@ -1,9 +1,10 @@
 module FakeDataHelper
   def fake_user_create_order(user)
     random_product = Product.all.sample
-    order = user.orders.find_or_create_by!(status: :unpaid, product_id: random_product.id) { |model|
-      model.pd_amount = Random.rand(1..10)
-    }
+    order = user.orders.create!(status: :unpaid, 
+      product_id: random_product.id, 
+      pd_amount: Random.rand(1..10)
+    )
   end
 
   def fake_update_order_status(order)
@@ -40,7 +41,7 @@ module FakeDataHelper
     exist_data
   end
 
-  def fake_user_product(user, limit_product = 100)
+  def fake_user_product(user, limit_product = 1000)
     product_count = user.products.count(:id)
     if product_count >= limit_product
       user_product = user.products.sample
@@ -51,7 +52,7 @@ module FakeDataHelper
         exist_data = user.products.find_by(name: product_name)
       end
       user_product = exist_data || user.products.create!(name: product_name,
-        stock_amount: Random.rand(1000..10000),
+        stock_amount: Random.rand(5400..5600),
         pd_price: Random.rand(0..9.99).round(2)
       )
     end

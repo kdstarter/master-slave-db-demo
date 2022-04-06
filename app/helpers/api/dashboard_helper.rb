@@ -26,7 +26,7 @@ module Api::DashboardHelper
       end
     }
 
-    if new_data.size < recent_size
+    if new_data.size < 3
       puts "#{which_db} -> cached time data, #{new_data.size} count"
     end
     new_data

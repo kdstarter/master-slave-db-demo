@@ -21,10 +21,10 @@ class Order < ApplicationRecord
   end
 
   def make_pay_closed
-    update_attributes(status: :closed)
+    update(status: :closed)
   end
 
   def make_pay_success
-    update_attributes(status: :success)
+    update(status: :success)
   end
 end

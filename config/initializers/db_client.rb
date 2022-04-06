@@ -22,7 +22,7 @@ class DbClient
 
     def _db_execute(config = {}, &block)
       begin
-        ActiveRecord::Base.connected_to(config) do
+        ActiveRecord::Base.connected_to(**config) do
           yield
         end
         [true, nil]

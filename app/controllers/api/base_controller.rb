@@ -1,6 +1,7 @@
 class Api::BaseController < ActionController::Base
   include FakeDataHelper
   protect_from_forgery with: :null_session
+  skip_before_action :verify_authenticity_token
   before_action :authenticate_user!
 
   def authenticate_user!

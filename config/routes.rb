@@ -4,8 +4,13 @@ Rails.application.routes.draw do
   get 'dashboard', to: 'home#dashboard'
 
   namespace :api do
-    resources :dashboard, only: [:index]
     resources :products, only: [:index, :create]
     resources :orders, only: [:index, :create, :update]
+
+    resources :dashboard, only: [:index] do
+      collection do
+        post 'mock_mix_action'
+      end
+    end
   end
 end

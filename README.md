@@ -31,10 +31,30 @@ curl -XGET 'http://localhost:3000/api/dashboard'
 
 ## ab工具做压力测试 (并行请求) 
 'Authorization: 1-1000' 表示每次接口请求的用户ID为1到1000中的随机一个
-* 获取我的商品列表 $ ab -c 100 -n 1000 -m GET -H 'Authorization: 1-1000' 'http://localhost:3000/api/products?scope=my'
-* 发布一个我的商品 $ ab -c 100 -n 1000 -m POST -H 'Authorization: 1-1000' 'http://localhost:3000/api/products'
+* 综合压力测试，随机分发到以下接口
+```bash
+ab -c 10 -n 100 -m POST -H 'Authorization: 1-1000' 'http://localhost:3000/api/dashboard/mock_mix_action'
+```
 
-* 获取我的订单列表 $ ab -c 100 -n 1000 -m GET -H 'Authorization: 1-1000' 'http://localhost:3000/api/orders?scope=my'
-* 创建待付款的订单 $ ab -c 50 -n 1000 -m POST -H 'Authorization: 1-1000' 'http://localhost:3000/api/orders'
-* 随机给订单付款或关闭 $ ab -c 100 -n 1000 -m PUT -H 'Authorization: 1-1000' 'http://localhost:3000/api/orders/random_id'
+* 以下是分别测试单个接口  
+获取我的商品列表
+```bash
+ab -c 100 -n 1000 -m GET -H 'Authorization: 1-1000' 'http://localhost:3000/api/products?scope=my'
+```
+发布一个我的商品
+```bash
+ab -c 100 -n 1000 -m POST -H 'Authorization: 1-1000' 'http://localhost:3000/api/products'
+```
+获取我的订单列表
+```bash
+ab -c 100 -n 1000 -m GET -H 'Authorization: 1-1000' 'http://localhost:3000/api/orders?scope=my'
+```
+创建待付款的订单
+```bash
+ab -c 50 -n 1000 -m POST -H 'Authorization: 1-1000' 'http://localhost:3000/api/orders'
+```
+随机给订单付款或关闭
+```bash
+ab -c 100 -n 1000 -m PUT -H 'Authorization: 1-1000' 'http://localhost:3000/api/orders/random_id'
+```
 

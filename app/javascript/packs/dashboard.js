@@ -22,7 +22,11 @@ function comparedTimeData(lastData, timeData) {
       if (dataKey.endsWith('Timef')) {
         let delaySecond = (timeData[dataKey] - lastData[dataKey]).toFixed(2);
         if (delaySecond >= 0) {
-          timeData[dataKey+delaySuffix] = delaySecond+'秒';
+          if (delaySecond > 666) {
+            $("#tbody-data>tr").hide();
+          } else {
+            timeData[dataKey+delaySuffix] = delaySecond+'秒';
+          }
         }
       } else if (dataKey.endsWith('Count')) {
         let incCount = timeData[dataKey] - lastData[dataKey];
@@ -54,7 +58,7 @@ function comparedTimeData(lastData, timeData) {
       timeData['primaryTotalInc'] = ' 新增 '+primaryTotalInc;
 
       if (primaryTotalInc > replicaTotalInc) {
-        if (replicaTotalInc == 0 && primaryTotalInc > 3) {
+        if (replicaTotalInc == 0 && primaryTotalInc >= 10) {
           timeData['replicaDbStatus'] = 'SyncStoped';
           timeData['replicaTotalInc'] = '已暂停'
         } else if (replicaTotalInc >= 0) {

@@ -1,5 +1,6 @@
-class Api::DashboardController < ApplicationController
+class Api::DashboardController < Api::BaseController
   include Api::DashboardHelper
+  skip_before_action :authenticate_user!, only: [:index]
 
   def index
     data = { primary: {}, replica: {} }
@@ -8,5 +9,9 @@ class Api::DashboardController < ApplicationController
       data[which_db] = db_data
     end
     render json: data
+  end
+
+  def mock_mix_action
+    mock_random_action
   end
 end

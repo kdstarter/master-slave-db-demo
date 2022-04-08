@@ -8,7 +8,7 @@ class Api::BaseController < ActionController::Base
   before_action :log_action_start, :authenticate_user!
   after_action :log_action_end
 
-  WARN_API_SEPENT = 0.5 # Seconds
+  WARN_API_SEPENT = 1.0 # Seconds
   ALL_API_REQ_COUNTER = 'all_api_req_counter'
   WARN_API_REQ_COUNTER = 'warn_api_req_counter'
 
@@ -36,6 +36,7 @@ class Api::BaseController < ActionController::Base
     elsif req_method == 'PUT' && req_path == '/api/orders/random_id'
       order_update_action
     else
+      debug_logger.error("Unknown proxy #{_auto_path_counter}")
       raise "Unknown proxy #{_auto_path_counter}"
     end
   end
@@ -121,6 +122,7 @@ class Api::BaseController < ActionController::Base
 
   def render_json_one(data = {})
     hash = { mock_action: @mock_action, current_user: current_user }
+    # debug_logger.debug("render one: #{hash}")
     if data.is_a? Hash
       hash.merge!(data)
     else
@@ -131,6 +133,9 @@ class Api::BaseController < ActionController::Base
 
   def render_json_pages(data)
     pager = pager_params(params)
+    hash = { mock_action: @mock_action, current_user: current_user, pager: pager }
+    # debug_logger.debug("render json: #{hash}")
+
     if data.blank?
       data = []
       pager[:total_pages] = 1
@@ -142,9 +147,8 @@ class Api::BaseController < ActionController::Base
     if data.first.is_a? Product
       data = data.as_json(with_owner: true)
     end
-
-    render json: { mock_action: @mock_action,
-      current_user: current_user, pager: pager, data: data }
+    hash[:data] = data
+    render json: hash
   end
 
 end

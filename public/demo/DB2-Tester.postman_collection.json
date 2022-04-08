@@ -1,0 +1,279 @@
+{
+	"info": {
+		"_postman_id": "0127a431-f233-4dc6-8420-af6034e50d61",
+		"name": "DB2高并发测试",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "随机请求一个接口",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"随机请求一个接口返回状态为200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{auth_user_id}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/dashboard/mock_mix_action",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"dashboard",
+						"mock_mix_action"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "发布一个我的商品",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"发布一个我的商品返回状态为200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{auth_user_id}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/products?a=1",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"products"
+					],
+					"query": [
+						{
+							"key": "a",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "获取我的商品列表",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"获取我的商品列表返回状态为200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{auth_user_id}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/products?scope=my",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"products"
+					],
+					"query": [
+						{
+							"key": "scope",
+							"value": "my"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "创建待付款的订单",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"创建待付款的订单返回状态为200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{auth_user_id}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/orders",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "获取我的订单列表",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"获取商品列表返回状态为200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{auth_user_id}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/orders?scope=my",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"orders"
+					],
+					"query": [
+						{
+							"key": "scope",
+							"value": "my"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "随机给订单付款或关闭",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"随机给订单付款或关闭返回状态为200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{auth_user_id}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/orders/random_id",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"orders",
+						"random_id"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "获取两数据库数据行数",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"获取两数据库当前数据行数返回状态为200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{auth_user_id}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/dashboard",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"dashboard"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,31 @@
+version: '3.8'
+
+networks:
+  # docker network inspect net-docker
+  net-docker:
+    external: true
+
+services:
+  server:
+    build: .
+    image: master-slave-demo-rails6
+    container_name: master-slave-demo
+    networks:
+      - net-docker
+    # restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/master-slave-demo # for dev mode
+      - ./log:/master-slave-demo/log
+      - ./public:/master-slave-demo/public
+      - ./node_modules:/master-slave-demo/node_modules
+
+  redis:
+    image: redis
+    container_name: redis_server
+    networks:
+      - net-docker
+    restart: always
+    ports:
+      - "6378:6379"

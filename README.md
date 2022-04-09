@@ -1,22 +1,18 @@
 说明文档
 =======
 
-## 环境搭建  
-
-* Ruby 2.5+
-* Rails 6.0+
-* Redis Server 
+## 环境搭建
+全套环境可使用 Docker，不用手动安装 MySQL 和 Ruby 开发环境。
+* Docker v20.10.x
+* docker-compose v1.28.x
 * Mysql 5.6+ 主从数据库，可使用Docker快速搭建环境，参考文档 [agilejzl/master-slave-db](https://github.com/agilejzl/master-slave-db)
 
 ## 运行环境
 * Step1: 配置数据库连接，打开 config/database.yml 文件，修改主从数据库的连接参数为你的
 * Setp2: 配置并行进程数，打开 config/puma.rb 文件，修改 WEB_CONCURRENCY 和 RAILS_MAX_THREADS  
-* Step3: Rails 相关命令执行顺序
+* Step3: 创建并启动容器
 ```bash  
-bundle install  
-rake db:create
-rake db:migrate
-rails s -b 0.0.0.0 -p 3000 
+docker-compose up
 ```
 在程序跑起来后，做下一步的数据检查
 

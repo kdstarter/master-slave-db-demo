@@ -2,7 +2,7 @@ class Order < ApplicationRecord
   belongs_to :user
   belongs_to :product
 
-  enum status: { unpaid: 0, closed: 1, success: 2 }
+  enum status: { unpaid: 0, closed: 1, successful: 2 }
 
   default_scope -> { order(id: :desc) }
 
@@ -20,11 +20,15 @@ class Order < ApplicationRecord
     self.total_price = pd_amount * product.pd_price
   end
 
-  def make_pay_closed
-    update(status: :closed)
-  end
-
-  def make_pay_success
-    update(status: :success)
+  def update_pay_status(status)
+    unless status.to_s == 'successful'
+      update!(status: status)
+    else
+      Order.transaction do
+        user.send(:update_credit, -total_price)
+        product.owner.send(:update_credit, total_price)
+        update!(status: status)
+      end
+    end
   end
 end

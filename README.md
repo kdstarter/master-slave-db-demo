@@ -5,7 +5,7 @@
 全套环境可使用 Docker，不用手动安装 MySQL 和 Ruby 开发环境。
 * Docker v20.10.x
 * docker-compose v1.28.x
-* Mysql 5.6+ 主从数据库，可使用Docker快速搭建环境，参考文档 [agilejzl/master-slave-db](https://github.com/agilejzl/master-slave-db)
+* Mysql 5.6+ 主从数据库，可使用Docker快速搭建环境
 
 ## 运行环境
 * Step1: 配置数据库连接，打开 config/database.yml 文件，修改主从数据库的连接参数为你的
@@ -23,7 +23,7 @@ curl -XGET 'http://localhost:3000/api/dashboard'
 ```
 
 ## Postman测试并发 (顺序请求) 
-* Postman可以选择接口集合，然后执行 "Run collection"，设置总执行回合即可测试。可下载 [接口集合文件](https://raw.githubusercontent.com/agilejzl/master-slave-db-demo/master/public/demo/DB2-Tester.postman_collection.json)，然后导入到 Postman
+* Postman可以选择接口集合，然后执行 "Run collection"，设置总执行回合即可测试。可下载 [接口集合文件](https://raw.githubusercontent.com/kdstarter/master-slave-db-demo/master/public/demo/DB2-Tester.postman_collection.json)，然后导入到 Postman
 
 ## ab工具做压力测试 (并行请求) 
 'Authorization: 1-1000' 表示每次接口请求的用户ID为1到1000中的随机一个
@@ -32,7 +32,7 @@ curl -XGET 'http://localhost:3000/api/dashboard'
 ab -c 50 -n 500 -m POST -H 'Authorization: 1-1000' 'http://localhost:3000/api/dashboard/mock_mix_action?scope=my'
 ```
 这时dashboard页面示范数据如下图  
-![dashboard页面示范](https://raw.githubusercontent.com/agilejzl/master-slave-db-demo/master/public/demo/db_dashboard.png)
+![dashboard页面示范](https://raw.githubusercontent.com/kdstarter/master-slave-db-demo/master/public/demo/db_dashboard.png)
 
 * 以下是分别测试单个接口  
 获取我的商品列表
@@ -53,6 +53,6 @@ ab -c 50 -n 1000 -m POST -H 'Authorization: 1-1000' 'http://localhost:3000/api/o
 ```
 随机给订单付款或关闭
 ```bash
-ab -c 100 -n 1000 -m PUT -H 'Authorization: 1-1000' 'http://localhost:3000/api/orders/random_id'
+ab -c 50 -n 500 -m PUT -H 'Authorization: 1-1000' 'http://localhost:3000/api/orders/random_id'
 ```
 

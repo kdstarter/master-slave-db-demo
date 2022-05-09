@@ -8,8 +8,8 @@ module FakeDataHelper
   end
 
   def fake_update_order_status(order)
-    random_status = %w(closed success)[Random.rand(0..1)]
-    order.send("make_pay_#{random_status}")
+    random_status = %w(closed successful)[Random.rand(0..1)]
+    order.send(:update_pay_status, random_status)
     order
   end
 

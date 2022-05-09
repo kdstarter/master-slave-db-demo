@@ -16,9 +16,13 @@ module Api::OrdersHelper
 
   def order_update_action
     random_order = Order.unpaid.sample
-    @current_user = random_order.user
-    @order = fake_update_order_status(random_order)
-    render_json_one(order: @order)
+    if random_order.blank?
+      render_json_one(order: {})
+    else
+      @current_user = random_order.user
+      @order = fake_update_order_status(random_order)
+      render_json_one(order: @order)
+    end
   end
 
 end
